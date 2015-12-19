@@ -1,0 +1,12 @@
+{application, erlint,
+ [
+  {description, "Erlang linter based on erl_lint:module"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { erlint, []}},
+  {env, []}
+ ]}.
