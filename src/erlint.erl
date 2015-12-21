@@ -69,8 +69,6 @@ print([{Type,File,{Line,_Mod,Err}}|More]) ->
             io:fwrite("~w ~w/~w",[Cat,Fun,Arity]);
         {Cat,Term} ->
             io:fwrite("~w ~s",[Cat,stringify_term(Term)]);
-        [Cat,Term] ->
-            io:fwrite("~w ~s",[Cat,stringify_term(Term)]);
         Err ->
             io:fwrite("~s",[stringify_term(Err)])
     end,
