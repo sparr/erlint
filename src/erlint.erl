@@ -43,35 +43,38 @@ lint(File) ->
             "Cannot open file"
     end.
 
+stringify_term(Term) ->
+    case io_lib:printable_list(Term) of
+        true ->
+            io_lib:format("~s",[Term]);
+        false ->
+            io_lib:format("~w",[Term])
+    end.
+
 % degenerate case
 print([]) ->
     0;
-print([{Type,File,{Line,_Module,{ErrT,{Function,Arity}}}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w/~w~n",[File,Line,Type,ErrT,Function,Arity]),
-    print(More);
-print([{Type,File,{Line,_Module,{ErrT,{Module,Function,Arity},ErrS}}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w:~w/~w (~s)~n",[File,Line,Type,ErrT,Module,Function,Arity,ErrS]),
-    print(More);
-print([{Type,File,{Line,_Module,{ErrT,ErrX}}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w~n",[File,Line,Type,ErrT,ErrX]),
-    print(More);
-print([{Type,File,{Line,_Module,{ErrT,ErrX,{Block,BlockLine}}}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w ~w@~w~n",[File,Line,Type,ErrT,ErrX,Block,BlockLine]),
-    print(More);
-print([{Type,File,{Line,_Module,{ErrT,ErrX,ErrY}}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w.~w~n",[File,Line,Type,ErrT,ErrX,ErrY]),
-    print(More);
-print([{Type,File,{Line,_Module,[ErrT,ErrX]}}|More]) ->
-    io:fwrite("~s:~w: ~w: ~w ~w~n",[File,Line,Type,ErrT,ErrX]),
-    print(More);
-print([{Type,File,{Line,_Module,Err}}|More]) ->
-    case io_lib:printable_list(Err) of
-        true ->
-            io:fwrite("~s:~w: ~w: ~s~n",[File,Line,Type,Err]);
-        false ->
-            io:fwrite("~s:~w: ~w: ~w~n",[File,Line,Type,Err])
+print([{Type,File,{Line,_Mod,Err}}|More]) ->
+    io:fwrite("~s:~w: ~w: ",[File,Line,Type]),
+    case Err of
+        {Cat,TermA,TermB,String} ->
+            io:fwrite("~w (~w,~w) ~s",[Cat,TermA,TermB,String]);
+        {Cat,{Mod,Fun,Arity},Description} ->
+            io:fwrite("~w ~w:~w/~w (~s)",[Cat,Mod,Fun,Arity,Description]);
+        {Cat,Term,{Block,BlockLine}} ->
+            io:fwrite("~w ~w ~w@~w",[Cat,Term,Block,BlockLine]);
+        {Cat,Term,Member} ->
+            io:fwrite("~w ~w.~w",[Cat,Term,Member]);
+        {Cat,{Fun,Arity}} ->
+            io:fwrite("~w ~w/~w",[Cat,Fun,Arity]);
+        {Cat,Term} ->
+            io:fwrite("~w ~s",[Cat,stringify_term(Term)]);
+        [Cat,Term] ->
+            io:fwrite("~w ~s",[Cat,stringify_term(Term)]);
+        Err ->
+            io:fwrite("~s",[stringify_term(Err)])
     end,
+    io:nl(),
     print(More);
 print(String) ->
     io:fwrite("~s~n",[String]).
-    
