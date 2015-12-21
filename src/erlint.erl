@@ -4,8 +4,9 @@
 main(["--version"]) ->
     io:fwrite("erlint version 0.1.0~n");
 main([File]) -> % escript passes in args in an array
-    Out = lint(File),
-    print(Out);
+    Compare = fun({_,File1,{Line1,_,Err1}},{_,File2,{Line2,_,Err2}}) ->
+        {File1,Line1,Err1} =< {File2,Line2,Err2} end,
+    print(lists:sort(Compare,lint(File)));
 main([]) -> % no args from escript
     io:fwrite("Usage: erlint filename.erl~n");
 main(File) -> % allow callers to pass filename in a bare string
