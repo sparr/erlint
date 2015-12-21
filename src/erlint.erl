@@ -20,14 +20,18 @@ lint(File) ->
                     [];
                 % just warnings
                 {ok, [Warnings]} ->
-                    [{warning,element(1,Warnings),X} || X <- element(2,Warnings)];
+                    {WFile,WList} = Warnings,
+                    [{warning,WFile,Warning} || Warning <- WList];
                 % errors, no warnings
                 {error, [Errors], []} ->
-                    [{error,element(1,Errors),X} || X <- element(2,Errors)];
+                    {EFile,EList} = Errors,
+                    [{error,EFile,Error} || Error <- EList];
                 % errors and warnings
                 {error, [Errors], [Warnings]} ->
-                    [{error,element(1,Errors),X} || X <- element(2,Errors)] ++
-                    [{warning,element(1,Warnings),X} || X <- element(2,Warnings)]
+                    {WFile,WList} = Warnings,
+                    {EFile,EList} = Errors,
+                    [{error,EFile,Error} || Error <- EList] ++
+                    [{warning,WFile,Warning} || Warning <- WList]
             end;
         {error, _} ->
             "Cannot open file"
