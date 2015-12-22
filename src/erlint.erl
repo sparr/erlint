@@ -1,3 +1,14 @@
+%%-------------------------------------------------------------------
+%% @author Clarence "Sparr" Risher <sparr0@gmail.com>
+%% @copyright (C) 2015 Clarence "Sparr" Risher
+%% @doc Performs syntax checking and linting of erlang source files.
+%% @end
+%%
+%% This source file is subject to the MIT License. You should have
+%% received a copy of the MIT license with this software. If not, it
+%% can be retrieved from: http://opensource.org/licenses/MIT
+%%-------------------------------------------------------------------
+
 -module(erlint).
 -export([main/1]).
 

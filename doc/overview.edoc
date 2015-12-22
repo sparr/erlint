@@ -1,0 +1,6 @@
+@title Erlint - The Erlang erl_lint Erlang linter
+@version 0.2.0
+@author Clarence "Sparr" Risher <sparr0@gmail.com>
+@copyright (C) 2015 Clarence "Sparr" Risher
+@doc Performs syntax checking and linting of erlang source files.
+@end
