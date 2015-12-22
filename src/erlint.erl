@@ -43,36 +43,13 @@ lint(File) ->
             "Cannot open file"
     end.
 
-stringify_term(Term) ->
-    case io_lib:printable_list(Term) of
-        true ->
-            io_lib:format("~s",[Term]);
-        false ->
-            io_lib:format("~w",[Term])
-    end.
+strip_newlines(Str) -> [ C || C <- lists:flatten(Str), C /= 10 ].
 
 % degenerate case
 print([]) ->
     0;
-print([{Type,File,{Line,_Mod,Err}}|More]) ->
-    io:fwrite("~s:~w: ~w: ",[File,Line,Type]),
-    case Err of
-        {Cat,TermA,TermB,String} ->
-            io:fwrite("~w (~w,~w) ~s",[Cat,TermA,TermB,String]);
-        {Cat,{Mod,Fun,Arity},Description} ->
-            io:fwrite("~w ~w:~w/~w (~s)",[Cat,Mod,Fun,Arity,Description]);
-        {Cat,Term,{Block,BlockLine}} ->
-            io:fwrite("~w ~w ~w@~w",[Cat,Term,Block,BlockLine]);
-        {Cat,Term,Member} ->
-            io:fwrite("~w ~w.~w",[Cat,Term,Member]);
-        {Cat,{Fun,Arity}} ->
-            io:fwrite("~w ~w/~w",[Cat,Fun,Arity]);
-        {Cat,Term} ->
-            io:fwrite("~w ~s",[Cat,stringify_term(Term)]);
-        Err ->
-            io:fwrite("~s",[stringify_term(Err)])
-    end,
-    io:nl(),
+print([{Type,File,{Line,Mod,Err}}|More]) ->
+    io:fwrite("~s:~w: ~w: ~s~n",[File,Line,Type,strip_newlines(Mod:format_error(Err))]),
     print(More);
 print(String) ->
     io:fwrite("~s~n",[String]).
